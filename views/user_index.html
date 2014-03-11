@@ -1,0 +1,8 @@
+{% extends 'layout.html' %}
+
+{% block title %} GYST -- SWIGGIN BITCHES {% endblock %}
+
+{% block content %}
+<h1>Welcome {{user.first_name}}!</h1>
+<a href="/messages/{{user.username}}">View Messages</a>
+{% endblock %}

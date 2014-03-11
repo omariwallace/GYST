@@ -1,0 +1,44 @@
+section {
+  margin-top: 10em;
+  padding: 1.5em;
+}
+
+.table {
+  width: 100%;
+}
+
+.table .row_no {
+  width: 5%;
+}
+
+.table .order_no {
+  width: 15%;
+}
+
+.table .date {
+  width: 15%;
+}
+
+.table .message {
+  width: 65%;
+}
+
+#welcome {
+  width: 80%;
+  margin: auto;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.well {
+  width: 40%;
+  margin: auto;
+  border-radius: 5px;
+  padding: 1em;
+  /*background-color: #dddddd;*/
+}
+
+.landing_button {
+  display: inline-block;
+  margin: 0.5em;
+}
