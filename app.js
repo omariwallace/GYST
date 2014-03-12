@@ -10,6 +10,7 @@ var http = require('http');
 var path = require('path');
 // swig documentation ==> http://paularmstrong.github.io/swig/docs/#express
 var swig = require('swig'); // required by ME
+require('./controllers/filters.js')(swig); // passing in swig object through the filters via node module
 
 // var flash = require('connect-flash');
 var mongoose = require('mongoose')
@@ -69,10 +70,11 @@ passport.deserializeUser(Account.deserializeUser());
 // ** ROUTES ** //
 app.get('/', routes.index);
 app.get('/register', user_routes.register_page);
-app.post('/register', user_routes.create_acct);
 app.get('/login', user_routes.login_page);
-app.get('/logout', user_routes.logout);
 app.get('/user_index', user_routes.user_index)
+app.get('/logout', user_routes.logout);
+app.get('/messages/:_id', user_routes.show_messages)
+
 app.post('/login',
   passport.authenticate('local'),
     function(req, res) {
@@ -80,9 +82,18 @@ app.post('/login',
       res.redirect('/user_index');
     }
 );
+app.post('/register', user_routes.create_acct);
+
+app.post('/test', function (req, res) {
+  console.log('Success: Transmission received from context.io')
+})
+
+app.post('/fail', function (req, res) {
+  console.log('Failure: Transmission received from context.io')
+})
 
 
-var test_date = new Date(1394160251 *1000);
+var test_date = new Date(1394561071 *1000);
 var test_date2 = new Date(1394135227 *1000);
 console.log("This is from test date 1: "+test_date);
 console.log("This is from test date 2: "+test_date2);

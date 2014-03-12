@@ -9,18 +9,16 @@ var Messages;
 var Schema = mongoose.Schema;
 
 var messageSchema = new Schema({
-  user: String;
-  ctx_id: String, // from Context.io, for getting the message body
-  body_text: String,
-  body_html: String,
+  ctx_id: String, // messsage.message_id
+  user: String, // message.addresses.from
+  body_text: String, // body query [0]
+  body_html: String, // body query [1]
   shipping_confirm_order_no: String,
   delivery_date: String,
   tracking_number: String,
   product_list: Array,
 });
 
-User = mongoose.model('User', userSchema);
 
 Message = mongoose.model('Message', messageSchema);
-
-module.exports = {'User': User, 'Message': Message};
+module.exports = {'Message': Message};

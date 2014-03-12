@@ -1,50 +1,15 @@
 var routes = require('../routes/user.js')
 var url = require('url');
-var contextIO = require('contextio');
 var async = require('async')
-var cheerio = require('cheerio')
+var contextIO = require('contextio');
 
-console.log(routes)
 
 var ctxioClient = new contextIO.Client({
   key: "2zor5ddk",
   secret: "peQ7UrRAX4yDwElR"
 });
 
-// async.waterfall([
-//     function(callback) {
-//       var user_email = req.user ? req.user.username : ""
-//       ctxioClient.accounts("5318d4b97dfe6819228a73a8").messages().get({'from':user_email}, function (err, ctx_res) {
-//           if (err) throw err;
-//           var messages = ctx_res.body
-//           var messageId_arr = [];
-//           for (i=0; i<messages.length; i++) {
-//             messageId_arr.push(messages[i].message_id)
-//           }
-//         callback(null, messages, messageId_arr);
-//       });
-//     },
-//     function(messages, messageId_arr, callback) {
-//       var message_container_text = [];
-//       var message_container_html = [];
-//       async.each(messageId_arr, function (item, inner_callback) {
-//         ctxioClient.accounts("5318d4b97dfe6819228a73a8").messages(item).body().get(function (err, ctx_res) {
-//         if (err) throw err;
-//         message = ctx_res.body[0];
-//         message_html = ctx_res.body[1];
-//         message_container_text.push(message);
-//         message_container_html.push(message_html);
-//         inner_callback();
-//         })
-//       }, function (err) {
-//         callback(null, messages, message_container_text, message_container_html);
-//       })
-//     },
-//     function(messages, message_container_text, message_container_html, callback) {
-//       res.render('user_index', { "messages": messages, "user": req.user, "message_container_text": message_container_text});
-//       callback();
-//     }
-//   ])
+var gyst_access_id = "5318d4b97dfe6819228a73a8";
 
 // exports.
 
