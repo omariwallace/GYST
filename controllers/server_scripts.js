@@ -1,17 +1,7 @@
-var routes = require('../routes/user.js')
 var url = require('url');
-var async = require('async')
-var contextIO = require('contextio');
-
-
-var ctxioClient = new contextIO.Client({
-  key: "2zor5ddk",
-  secret: "peQ7UrRAX4yDwElR"
-});
 
 var gyst_access_id = "5318d4b97dfe6819228a73a8";
 
-// exports.
 
 // ** Get Shipping Confirmation No. **
 // str.match(/(?=Shipping Confirmation Order #).*?(?=<)/)[0].split(" #")
@@ -35,6 +25,7 @@ var gyst_access_id = "5318d4b97dfe6819228a73a8";
 // console.log(trackingLink)
 // return trackingLink
 
+// **** NOTE :: REPLACED WITH HTML SEARCH ***
 // ** Get Product List **
 // var links = str.match(/(?:(Shipment Details\s<http\:)).*?(<)/g);
 // var product = links[0].match(/(?:>\s).*?(?=<)/g)[0].slice(1).trim();
@@ -58,14 +49,6 @@ exports.getTrackingNumber = function (url_string) {
   //   packageId: '1>' }
   var tracking_no = shipping_query.query.trackingNumber
   console.log(tracking_no);
-}
-
-// Function doesn't work; error with async?
-exports.getMessageBody = function (message_id) {
-  ctxioClient.accounts("5318d4b97dfe6819228a73a8").messages(message_id).get(function (err, ctx_res) {
-    if (err) throw err;
-    message = ctx_res.body
-  });
 }
 
 
