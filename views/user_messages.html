@@ -17,8 +17,8 @@
     {% for message in message_container_text %}
     <tr>
       <td>{{loop.index}}</td>
-      <td>Content</td>
-      <td>Content</td>
+      <td>##-###-####</td>
+      <td>{{message.content | dater}}</td>
       <td>{{message.content}}</td>
     </tr>
     {% endfor %}

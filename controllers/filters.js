@@ -5,4 +5,10 @@ module.exports = function (swig) {
   }
 
   swig.setFilter('dequoter', dequoter);
+
+  var date_render = function (str) {
+    return str.match(/Date:\s(.+?)\s(AM|PM)/g)[0];
+  }
+
+  swig.setFilter('dater', date_render);
 }

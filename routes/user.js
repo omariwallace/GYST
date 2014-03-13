@@ -4,22 +4,22 @@ var async = require('async');
 var Account = require('../models/account')
 
 // Context.io //
-var ctxioClient = new contextIO.Client({
-  key: "2zor5ddk",
-  secret: "peQ7UrRAX4yDwElR"
-});
 /** General URL structure to call the API
 
   ctxioClient.RESOURCE(INSTANCE_ID).SUB_RESOURCE().METHOD(PARAMS, CALLBACK_FN)
 
-  Example:
+  ==>Example:
   ctxioClient.accounts().get({limit:15}, function (err, response) {
     if (err) throw err;
     console.log(response.body);
   });
 
-  Produces URL: GET /2.0/accounts?limit=15
+  ==>Produces URL: GET /2.0/accounts?limit=15
 **/
+var ctxioClient = new contextIO.Client({
+  key: "2zor5ddk",
+  secret: "peQ7UrRAX4yDwElR"
+});
 
 exports.register_page = function(req, res){
   res.render('register', {});

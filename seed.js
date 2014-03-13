@@ -36,7 +36,10 @@ async.waterfall([
   function(message_obj, callback) {
     // Nicoles shoes = 531dd5fc664f4b92528b456b
     // Sierra order = 531df31223c300261c8b4569
-    var test_html = "Single message_obj body: "+message_obj["531dd5fc664f4b92528b456b"]["body_html"];
+    var test_html = "SingleOh wow message_obj body: "+message_obj["531dd5fc664f4b92528b456b"]["body_html"];
+    for (message in message_obj) {
+
+    }
 
     // Message object: ALL KEYS (Message ID's)
     // console.log("Message obj keys: "+Object.keys(message_obj))
