@@ -36,7 +36,8 @@ async.waterfall([
   function(message_obj, callback) {
     // Nicoles shoes = 531dd5fc664f4b92528b456b
     // Sierra order = 531df31223c300261c8b4569
-    var test_html = "SingleOh wow message_obj body: "+message_obj["531dd5fc664f4b92528b456b"]["body_html"];
+    // Darron order = 531d4383f37c1f012d8b4567
+    var test_html = message_obj["531df31223c300261c8b4569"]["body_html"];
     for (message in message_obj) {
 
     }
@@ -50,8 +51,7 @@ async.waterfall([
     // Message object: Single Message body
     // console.log("Single message_obj body: "+message_obj["531a194937e1f156228b456a"]["body_html"]);
 
-    message_obj.test_html = test_html;
-    // BE SURE TO SET THIS BACK TO THE FULL MESSAGE OBJECT!!
+    message_obj.test_html = test_html; // <== BE SURE TO SET THIS BACK TO THE FULL MESSAGE OBJECT!!
     // AND SAVE TO THE DATAB
     callback(null, message_obj);
   }

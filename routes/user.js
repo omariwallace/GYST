@@ -83,7 +83,8 @@ exports.show_messages = function(req, res) {
       })
     },
     function(messages, message_container_text, message_container_html, callback) {
-      res.render('user_messages', { "messages": messages, "user": req.user, "message_container_text": message_container_text});
+      res.render('user_messages', { "messages": messages, "user": req.user, "message_container_text": message_container_html});
+        console.log(messages)
       callback();
     }
   ])

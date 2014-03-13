@@ -18,13 +18,13 @@
     <tr>
       <td>{{loop.index}}</td>
       <td>##-###-####</td>
-      <td>{{message.content | dater}}</td>
+      <td>MM.DD.YYYY</td>
       <td>{{message.content}}</td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
 <div class="container">
-  {{messages}}
+  {{messages[0].message_id}}
 </div>
 {% endblock %}

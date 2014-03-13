@@ -3,12 +3,29 @@ var cheerio = require('cheerio');
 var url = require('url');
 
 // ***************** HTML PARSING *****************
-
+// Will need to update this function to take the message object which contains both the html and text versions of the emails
+/**
+Take messaage object
+Check message object html email for tracking link
+If link, return link
+else, return message object text for parsing;
+**/
 exports.getAllLinks = function(html) {
   var $ = cheerio.load(html);
   var links_obj = {};
-  var link_text = $('a').textDelim('||').split('||');
-  var links = $('a')
+  link_text = [];
+  $('a').map(function(i,a_tag) {
+    // console.log($(a_tag).text())
+    link_text.push($(a_tag).text())
+  });
+
+  var links = $('a') // for loop extraction
+
+  // ********** OPTIMIZE LATER **********
+  var links_as_str = $('a').toString(); // regex extraction
+  // regex to optimize: /href="(.+?)"/g
+  // ==> Returns clean array of hrefs
+  // ********** OPTIMIZE LATER **********
 
   // Get all links in an object {key_no: href}
   for (key in links) {
@@ -18,73 +35,86 @@ exports.getAllLinks = function(html) {
     }
   }
 
-  // Get specfic tracking link
-  for (link in links_obj) {
-    if((/trackingNumber/g).test(links_obj[link]))
-      var trackingLink = links_obj[link]
-  }
-
-  // Extract Tracking Info from link
-  var tracking_obj = getTrackingInfo(trackingLink);
-
-  // Clean link text for product names
-  var link_text_clean = [];
-  for (var i=0; i<link_text.length; i++) {
-    if (!link_text[i].match(/\S/g)) {
-      continue;
-    } else {
-      link_text_clean.push(link_text[i].trim());
-    }
-  }
-
-  // Get products array
-  for (i=0; i<link_text_clean.length; i++) {
-      if(link_text_clean[i].match(/\Your Orders/g) !== null) {
-          var begin = i+1;
+  // Determine if email is text or html format (if html, has trackingLink)
+  var index = 1;
+  var end = Object.keys(links_obj).length;
+  for (specific_link in links_obj) {
+      if (index == end) {
+          // Will be getTrackingInfo.text_parser()
+          console.log ("Run the TEXT parser");
+          break;
+      } else {
+        if((/trackingNumber/g).test(links_obj[specific_link])) {
+          console.log("Run the HTML function");
+          // Get tracking link from link object
+          var trackingLink = links_obj[specific_link]
+          // Extract Tracking Info from tracking link into tracking object
+          var tracking_obj = getTrackingInfo.html_parser(trackingLink, link_text);
+          break;
+        }
       }
-      if(link_text_clean[i].match(/Online Return Center/) !== null) {
-          var end1 = i;
-      }
-      if(link_text_clean[i].match(/\d{3}-\d/) !== null) {
-          var end2 = i;
-      }
+      index +=1;
   }
-  if (end2 < begin) {
-      var end = end1;
-  } else if (end2 < end1) {
-      var end = end2;
-  }
-  var products = link_text_clean.slice(begin, end);
 
-  tracking_obj['products'] = products;
-
+  // console.log(tracking_obj);
   return tracking_obj;
 }
 
-// ** Helper Function ** //
-function getTrackingInfo (url_string) {
-  url_string = url_string.replace(/amp;/g,''); // to remove escaped "&" sign from query param
-  var parsed_url = url.parse(url_string,true); // true makes the query parameter an object;
-  var query_string_url = parsed_url.query.U;
-  var shipping_query = url.parse(query_string_url,true);
 
-  var tracking_obj = {}
-  var tracking_no = shipping_query.query.trackingNumber;
-  var orderID = shipping_query.query.orderID;
-  var shipMethod = shipping_query.query.shipMethod;
-  var latestArrivalDate = new Date(shipping_query.query.latestArrivalDate * 1000);
-  tracking_obj = {
-    tracking_no: tracking_no,
-    orderID: orderID,
-    shipMethod: shipMethod,
-    latestArrivalDate: latestArrivalDate
-  }
-  // console.log(tracking_obj);
-  // { '9361289949033129100801':
-  //  { orderID: '110-9800370-4877869',
-  //    shipMethod: 'USPS_SC_AT_PARCEL',
-  //    latestArrivalDate: Mon Mar 10 2014 23:00:00 GMT-0400 (EDT) } }
-  return tracking_obj;
+
+// ********** Helper Function Object Wrapper ********** //
+var getTrackingInfo = {
+    // Produce tracking object from shipping query params
+  tracking_obj: {},
+  html_parser: function (url_string, a_tag_text) {
+    // Takes tracking url and produces an object of its query params
+    url_string = url_string.replace(/amp;/g,''); // to remove escaped "&" sign from query param
+    var parsed_url = url.parse(url_string,true); // true makes the query parameter an object;
+    var query_string_url = parsed_url.query.U;
+    var shipping_query = url.parse(query_string_url,true);
+
+    var tracking_no = shipping_query.query.trackingNumber
+    this.tracking_obj[tracking_no] = {}
+    this.tracking_obj[tracking_no] = {
+          orderID: shipping_query.query.orderID,
+          shipMethod: shipping_query.query.shipMethod,
+          latestArrivalDate: new Date(shipping_query.query.latestArrivalDate * 1000)
+        }
+    // Clean link text for product names from a_tag_text param
+    var link_text_clean = [];
+    for (var i=0; i<a_tag_text.length; i++) {
+      if (!a_tag_text[i].match(/\S/g)) {
+        continue;
+      } else {
+        link_text_clean.push(a_tag_text[i].trim());
+      }
+    }
+
+    // Get products array
+    for (i=0; i<link_text_clean.length; i++) {
+        if(link_text_clean[i].match(/\Your Orders/g) !== null) {
+            var begin = i+1;
+        }
+        if(link_text_clean[i].match(/Online Return Center/) !== null) {
+            var end1 = i;
+        }
+        if(link_text_clean[i].match(/\d{3}-\d/) !== null) {
+            var end2 = i;
+        }
+    }
+    if (end2 < begin) {
+        var end = end1;
+    } else if (end2 < end1) {
+        var end = end2;
+    }
+    var products = link_text_clean.slice(begin, end);
+    this.tracking_obj[tracking_no]['products'] = products;
+    return this.tracking_obj;
+    //==> { '9361289949033129100801':
+    //==>  { orderID: '110-9800370-4877869',
+    //==>    latestArrivalDate: Mon Mar 10 2014 23:00:00 GMT-0400 (EDT) } }
+    //==>    shipMethod: 'USPS_SC_AT_PARCEL',
+  },
 }
 
 // Update user messages

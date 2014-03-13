@@ -3,6 +3,8 @@ Notes to self:
 - Need to account for user logging out from a different browser window; redirect to hime screen
 
 - Need to set up a sync to notify when a new email comes in and save it to the database
+see: Node events library
+http://nodejs.org/api/events.html
 
 - Modified the cheerio library to add a delimiter to the .text() method
 
@@ -13,6 +15,9 @@ Notes to self:
 
 //     </h1>
 // </div> -->
+
+-- ISSUES
+- Fix route from sign-up --> view messages; note that route url says "/register"
 
 Commit Notes
 Incorporated date swig filter (for front end demo);
