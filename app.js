@@ -13,14 +13,14 @@ var swig = require('swig'); // required by ME
 require('./controllers/filters.js')(swig); // passing in swig object through the filters via node module
 
 // var flash = require('connect-flash');
-var mongoose = require('mongoose')
+var mongoose = require('mongoose');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 
 var app = express();
 
 // all environments
-app.engine('html', swig.renderFile)
+app.engine('html', swig.renderFile);
 
 app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, 'views'));
@@ -59,7 +59,7 @@ app.configure('production', function(){
 });
 
 // configure Passport-Mongoose
-var Account = require('./models/account');
+var Account = require('./models/account').Account;
 // console.log(Account.serializeUser());
 passport.use(new LocalStrategy(Account.authenticate()));
 
