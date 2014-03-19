@@ -4,7 +4,6 @@
  */
 
 var express = require('express');
-var routes = require('./routes');
 var user_routes = require('./routes/user');
 var http = require('http');
 var path = require('path');
@@ -16,6 +15,8 @@ require('./controllers/filters.js')(swig); // passing in swig object through the
 var mongoose = require('mongoose');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+var gapi = require('./lib/gapi');
 
 var app = express();
 
@@ -51,12 +52,16 @@ app.use(express.static(path.join(__dirname, 'public')));
 // }
 
 app.configure('development', function(){
-    app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+  console.log(" This is DEVELOPMENT!!");
+  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 
 app.configure('production', function(){
-    app.use(express.errorHandler());
+  console.log('THIS is PRODUCTION!');
+  app.use(express.errorHandler());
 });
+
+
 
 // configure Passport-Mongoose
 var Account = require('./models/account').Account;
@@ -66,37 +71,97 @@ passport.use(new LocalStrategy(Account.authenticate()));
 passport.serializeUser(Account.serializeUser());
 passport.deserializeUser(Account.deserializeUser());
 
+// ***** Passport Oauth Works -- Cannot Figure out how to access oauth client *****
+// // configure Passport-Google
+// passport.use(new GoogleStrategy({
+//     clientID:'717427766570-fdmuac41856age7mmeu5legtudb42lip.apps.googleusercontent.com',
+//     clientSecret: 'k395f6ICzs5FEl_y0jzsTeHA',
+//     callbackURL: "http://localhost:3000/oauth2callback"
+//   },
+//   function(accessToken, refreshToken, profile, done) {
+//     // asynchronous verification, for effect...
+//     process.nextTick(function () {
+//       console.log("accessToken: ", accessToken);
+//       console.log("refreshToken: ", refreshToken);
+//       console.log("profile: ", profile);
+
+//       // To keep the example simple, the user's Google profile is returned to
+//       // represent the logged-in user.  In a typical application, you would want
+//       // to associate the Google account with a user record in your database,
+//       // and return that user instead.
+//       return done(null, profile);
+//     });
+//   }
+// ));
+// ***** ABOVE THIS LINE WORKS -- JUST UNCOMMENT FOR Passport Google Oauth *****
 
 // ** ROUTES ** //
-app.get('/', routes.index);
+app.get('/', user_routes.index);
 app.get('/register', user_routes.register_page);
 app.get('/login', user_routes.login_page);
-app.get('/user_index', user_routes.user_index)
+app.get('/user_index', user_routes.user_index);
+app.get('/user_cal/:cal_id', user_routes.user_cal);
 app.get('/logout', user_routes.logout);
-app.get('/messages/:_id', user_routes.show_messages)
+app.get('/orders/:_id', user_routes.show_orders);
+// app.get('/glogin', gapi.glogin);
+app.get('/oauth2callback', user_routes.user_auth);
 
+// ***** PASSPORT GOOGLE OAUTH *****
+// GET /auth/google
+//   Use passport.authenticate() as route middleware to authenticate the
+//   request.  The first step in Google authentication will involve redirecting
+//   the user to google.com.  After authenticating, Google will redirect the
+//   user back to this application at /auth/google/return
+// app.get('/auth/google',
+//   passport.authenticate('google', {
+//     scope: ['https://www.googleapis.com/auth/userinfo.profile',
+//       'https://www.googleapis.com/auth/userinfo.email',
+//       'https://www.googleapis.com/auth/calendar']
+//   }));
+
+// ***** PASSPORT GOOGLE OAUTH *****
+// GET /auth/google/return
+//   Use passport.authenticate() as route middleware to authenticate the
+//   request.  If authentication fails, the user will be redirected back to the
+//   login page.  Otherwise, the primary route function function will be called,
+//   which, in this example, will redirect the user to the home page.
+// app.get('/auth/google/callback',
+//   passport.authenticate('google', { failureRedirect: '/user_index' })
+// );
+
+
+// ***************** POSTS *****************
 app.post('/login',
   passport.authenticate('local'),
     function(req, res) {
-      console.log("executing post")
+      console.log("executing post");
       res.redirect('/user_index');
     }
 );
+
 app.post('/register', user_routes.create_acct);
 
 app.post('/test', function (req, res) {
-  console.log('Success: Transmission received from context.io')
-})
+  console.log('Success: Transmission received from context.io');
+});
 
 app.post('/fail', function (req, res) {
-  console.log('Failure: Transmission received from context.io')
-})
+  console.log('Failure: Transmission received from context.io');
+});
 
+app.post('/addCal', user_routes.addCal);
 
-var test_date = new Date(1394561071 *1000);
-var test_date2 = new Date(1394135227 *1000);
-console.log("This is from test date 1: "+test_date);
-console.log("This is from test date 2: "+test_date2);
+// ***** PASSPORT GOOGLE OAUTH *****
+// ******************************************
+// Simple route middleware to ensure user is authenticated.
+//   Use this route middleware on any resource that needs to be protected.  If
+//   the request is authenticated (typically via a persistent login session),
+//   the request will proceed.  Otherwise, the user will be redirected to the
+//   login page.
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) { return next(); }
+  res.redirect('/login');
+}
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

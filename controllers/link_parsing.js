@@ -99,7 +99,8 @@ function htmlParse(url_string, a_tag_text_arr, username) {
 
     var tracking_no = shipping_query.query.trackingNumber;
     // this.shipment_obj[tracking_no] = {};
-    tracking_obj[tracking_no] = {
+    tracking_obj = {
+      tracking_no: tracking_no,
       username: username,
       orderID: shipping_query.query.orderID,
       shipMethod: shipping_query.query.shipMethod,
@@ -136,7 +137,7 @@ function htmlParse(url_string, a_tag_text_arr, username) {
     }
     // Extract products from array and append to shipment object
     var products = link_text_clean.slice(begin, end);
-    tracking_obj[tracking_no]['products'] = products;
+    tracking_obj['products'] = products;
     return tracking_obj;
     //==> { '9361289949033129100801':
     //==>  { orderID: '110-9800370-4877869',
@@ -207,3 +208,33 @@ var test2 ="http://www.amazon.com/gp/r.html?R=BNTMD3MRRVZB&amp;C=3TG14KBDH777U&a
 // // console.log(url.parse(test3, true))
 // // console.log(url.parse(test))
 // console.log(getTrackingNumber(test3))
+
+
+// ** Get Shipping Confirmation No. **
+// str.match(/(?=Shipping Confirmation Order #).*?(?=<)/)[0].split(" #")
+// ==> [ 'Shipping Confirmation Order', '112-7659907-8363465' ]
+
+// ** Get Delivery Date **
+// str.match(/(?=Your guaranteed delivery date is:).*?(?=\*\s)/)[0].split(" *")
+// ==> [ 'Your guaranteed delivery date is:', 'Friday, January 17, 2014' ]
+
+// ** Get Shipping Tracker Link **
+// var links = str.match(/(?=<http).*?(?:>)/g);
+
+// var trackingLink;
+
+// for (var i=0; i<links.length; i++) {
+//     if (links[i].indexOf("trackingNumber") !== -1) {
+//         trackingLink = links[i].substring(1,links[i].length-1);
+//     }
+// }
+
+// console.log(trackingLink)
+// return trackingLink
+
+// **** NOTE :: REPLACED WITH HTML SEARCH ***
+// ** Get Product List **
+// var links = str.match(/(?:(Shipment Details\s<http\:)).*?(<)/g);
+// var product = links[0].match(/(?:>\s).*?(?=<)/g)[0].slice(1).trim();
+// console.log(product);
+// return product

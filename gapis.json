@@ -1,0 +1,109 @@
+{
+  "web":
+    {
+      "auth_uri":"https://accounts.google.com/o/oauth2/auth",
+      "client_secret":"k395f6ICzs5FEl_y0jzsTeHA",
+      "token_uri":"https://accounts.google.com/o/oauth2/token",
+      "client_email":"717427766570-fdmuac41856age7mmeu5legtudb42lip@developer.gserviceaccount.com",
+      "redirect_uris":["http://localhost:3000/oauth2callback"],
+      "client_x509_cert_url":"https://www.googleapis.com/robot/v1/metadata/x509/717427766570-fdmuac41856age7mmeu5legtudb42lip@developer.gserviceaccount.com",
+      "client_id":"717427766570-fdmuac41856age7mmeu5legtudb42lip.apps.googleusercontent.com","auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs",
+      "javascript_origins":["http://localhost:3000"]
+    }
+}
+
+// Add a user to the we.gyst calendar -- calendar.acl.insert
+{
+  "role": "writer",
+  "scope":
+  {
+    "type": "user",
+    "value": "omari.wallace@gmail.com"
+  },
+  "kind": "calendar#aclRule"
+}
+
+// Add an event to a calendar -- calendar.events.insert
+// POST https://www.googleapis.com/calendar/v3/calendars/we.gyst%40gmail.com/events?sendNotifications=true&key={YOUR_API_KEY}
+{
+  "end": {
+    "date": "2014-03-16" // yyyy-mm-dd
+  },
+  "start": {
+    "date": "2014-03-16" // yyyy-mm-dd
+  },
+  "description": "test package", // list products, tracking no, order link
+  "transparency": "transparent", // won't block time on user's calendar
+  "summary": "New Delivery", // event title (add tracking no)
+  "reminders":
+  {
+    "overrides":
+    [
+      {
+        "method": "email",
+        "minutes": 2880 // no of minutes for reminder
+      },
+      {
+        "method": "email",
+        "minutes": 1440
+      },
+      {
+        "method": "popup",
+        "minutes": 0
+      }
+    ],
+    "useDefault": false // must be set to false to add custom reminders to event
+  }
+}
+
+// RESPONSE
+{
+ "kind": "calendar#event",
+ "etag": "\"uz4dSMPAwpogj1sIr_PP7Gm-AxY/Mjc5MDAxNDM2NTg3NjAwMA\"",
+ "id": "0v7q91ja1djb9us6tj218rfgj4",
+ "status": "confirmed",
+ "htmlLink": "https://www.google.com/calendar/event?eid=MHY3cTkxamExZGpiOXVzNnRqMjE4cmZnajQgd2UuZ3lzdEBt", // link back to user's calendar
+ "created": "2014-03-16T21:59:42.000Z",
+ "updated": "2014-03-16T21:59:42.980Z",
+ "summary": "New Delivery",
+ "description": "test package",
+ "creator": {
+  "email": "we.gyst@gmail.com",
+  "displayName": "Getur Shiptogether",
+  "self": true
+ },
+ "organizer": {
+  "email": "we.gyst@gmail.com",
+  "displayName": "Getur Shiptogether",
+  "self": true
+ },
+ "start": {
+  "date": "2014-03-16"
+ },
+ "end": {
+  "date": "2014-03-16"
+ },
+ "transparency": "transparent",
+ "iCalUID": "0v7q91ja1djb9us6tj218rfgj4@google.com",
+ "sequence": 0,
+ "reminders": {
+  "useDefault": false,
+  "overrides": [
+   {
+    "method": "popup",
+    "minutes": 0
+   },
+   {
+    "method": "email",
+    "minutes": 1440
+   },
+   {
+    "method": "email",
+    "minutes": 2880
+   }
+  ]
+ }
+}
+
+
+// acl_id: user:we.gyst@gmail.com

@@ -23,7 +23,6 @@ async.waterfall([
     });
   },
   function(messages, callback) {
-    var shipment_obj;
     var shipment_obj_arr= [];
     // console.log(messages+Object.keys(messages).length);
     for (var i=0; i<messages.length; i++) {
@@ -33,27 +32,24 @@ async.waterfall([
       var body_text = messages[i].body[0].content;
       var body_html = messages[i].body[1].content;
 
-      var parseResult =  linkParser.getShipments(username,message_id,body_html, body_text);
-      // console.log(parseResult);
+      var parsedResult =  linkParser.getShipments(username,message_id,body_html, body_text);
+      // console.log(parsedResult);
 
-      if (typeof(parseResult) !== 'undefined') {
-        shipment_obj_arr.push(parseResult);
+      if (typeof(parsedResult) !== 'undefined') {
+        shipment_obj_arr.push(parsedResult);
       }
     }
     callback(null, shipment_obj_arr);
-  },
-  function(shipment_obj_arr, callback) {
-    console.log(shipment_obj_arr);
-    // for (var tracking_no in shipment_obj) {
-
-    // }
-    // console.log(ships_per_user);
-    // Will validate ships_per_user HERE
-    // console.log(ships_per_user);
-    // ships_per_user["dsing.1988"] = test_user;
-    callback(null, ships_per_user);
+    // try to make shipments / user as next step in waterfall for future version
   }
 ], function (err, results) {
-  // Will save to DB HERE
-  // console.log(Object.keys(result));
+  for (i=0; i<results.length; i++) {
+    Shipment.create({
+      tracking_number: results[i].tracking_no,
+      orderID: results[i].orderID,
+      delivery_date: results[i].latestArrivalDate,
+      product_list: results[i].products,
+      user: results[i].username
+    })
+  }
 });

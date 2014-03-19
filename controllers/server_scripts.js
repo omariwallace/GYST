@@ -2,36 +2,20 @@ var url = require('url');
 
 var gyst_access_id = "5318d4b97dfe6819228a73a8";
 
+var contextIO = require('contextio');
+var ctxioClient = new contextIO.Client({
+  key: "2zor5ddk",
+  secret: "peQ7UrRAX4yDwElR"
+});
 
-// ** Get Shipping Confirmation No. **
-// str.match(/(?=Shipping Confirmation Order #).*?(?=<)/)[0].split(" #")
-// ==> [ 'Shipping Confirmation Order', '112-7659907-8363465' ]
+ ctxioClient.accounts(gyst_access_id).sync(function (err, response) {
+    if (err) throw err;
+    console.log(response.body);
+  });
 
-// ** Get Delivery Date **
-// str.match(/(?=Your guaranteed delivery date is:).*?(?=\*\s)/)[0].split(" *")
-// ==> [ 'Your guaranteed delivery date is:', 'Friday, January 17, 2014' ]
 
-// ** Get Shipping Tracker Link **
-// var links = str.match(/(?=<http).*?(?:>)/g);
 
-// var trackingLink;
-
-// for (var i=0; i<links.length; i++) {
-//     if (links[i].indexOf("trackingNumber") !== -1) {
-//         trackingLink = links[i].substring(1,links[i].length-1);
-//     }
-// }
-
-// console.log(trackingLink)
-// return trackingLink
-
-// **** NOTE :: REPLACED WITH HTML SEARCH ***
-// ** Get Product List **
-// var links = str.match(/(?:(Shipment Details\s<http\:)).*?(<)/g);
-// var product = links[0].match(/(?:>\s).*?(?=<)/g)[0].slice(1).trim();
-// console.log(product);
-// return product
-
+// ***** OLD EMAIL PARSING FORM SERVER SCIPTS MODULE ******
 exports.getTrackingNumber = function (url_string) {
   var parsed_url = url.parse(url_string,true);
   var query_string_url = parsed_url.query.U;

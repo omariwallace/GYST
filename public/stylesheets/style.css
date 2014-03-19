@@ -1,8 +1,54 @@
-section {
-  margin-top: 5em;
-  padding: 1.5em;
+body {
+  padding: 0;
+  margin: 0;
 }
 
+section.home {
+  background-image: url(../images/tunnel-101976_1920.jpg);
+  background-origin: padding-box;
+  background-repeat: no-repeat;
+  height: 800px;
+  padding-top: 100px;
+}
+
+section {
+  background-image: none;
+  padding: 0;
+  margin: 0;
+}
+
+section.clean{
+  padding-top: 100px;
+}
+
+.navbar {
+  margin-bottom: 0px;
+  height: 50px;
+}
+
+table.tableSection {
+    display: table;
+    width: 100%;
+}
+table.tableSection thead, table.tableSection tbody {
+    float: left;
+    width: 100%;
+}
+table.tableSection tbody {
+    overflow: auto;
+    height: 500px;
+}
+table.tableSection tr {
+    width: 100%;
+    display: table;
+    text-align: left;
+}
+/*table.tableSection th, table.tableSection td {
+    width: 33%;
+    text-align: left;
+}
+*/
+/*
 .table {
   width: 100%;
 }
@@ -21,15 +67,17 @@ section {
 
 .table .message {
   width: 65%;
-}
+}*/
 
 #welcome {
-  width: 80%;
+  width: 65%;
   margin: auto;
-  border-radius: 5px;
   text-align: center;
+  color: white;
+  border-radius: 5px;
 }
 
+/* Login Page */
 .well {
   width: 40%;
   margin: auto;
@@ -41,4 +89,44 @@ section {
 .landing_button {
   display: inline-block;
   margin: 0.5em;
+}
+
+#logo {
+  float: left;
+  height: 2em;
+  margin: 10px 2px;
+}
+
+.container {
+  margin: 100px auto;
+  width: 90%;
+}
+
+.container.home {
+  text-align: center;
+}
+
+.jumbotron {
+  text-align: center;
+  border-radius: 5px;
+}
+
+.container.jumbotron {
+  background-image: url(../images/tunnel-101976_1920.jpg);
+  background-origin: padding-box;
+  background-repeat: no-repeat;
+}
+
+#calendar {
+  width: 90%;
+  background-color: #373C40;
+  padding: 10px;
+  border-radius: 5px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+iframe {
+  width: 100%;
+  height: 500px;
 }

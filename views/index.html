@@ -1,20 +1,16 @@
 {% extends 'layout.html' %}
-
-{% block title %} GYST -- SWIGGIN BITCHES {% endblock %}
-
 {% block content %}
-<div class="jumbotron" id="welcome">
-  <h1>Get Your Ship Together</h1>
-
-  <p>{{user}}</p>
-
-  <div>
-    <form class="landing_button" action="/register">
-      <button type="submit" class="btn btn-primary btn-lg">Sign Up</button>
-    </form>
-    <form class="landing_button" action="/login">
-      <button type="submit" class="btn btn-primary btn-lg">Login</button>
-    </form>
+<section class="home">
+  <div class='jumbotron' id="welcome">
+    <h1>Get Your Ship Together</h1>
+    <div>
+      <form class="landing_button" action="/register">
+        <button type="submit" class="btn btn-primary btn-lg">Sign Up</button>
+      </form>
+      <form class="landing_button" action="/login">
+        <button type="submit" class="btn btn-default btn-lg">Login</button>
+      </form>
+    </div>
   </div>
-</div>
+</section>
 {% endblock %}
