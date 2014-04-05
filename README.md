@@ -1,4 +1,8 @@
-Notes to self:
+GET YOUR SHIP TOGETHER (GYST)
+
+Users forward their Amazon shipping confirmation emails to we.gyst@gmail.com. From there, Get Your Ship Together (GYST) pulls and parses their emails to extract the product information, Amazon order ID, expected delivery date, and the tracking number. Upon visiting the site, users can (1) view their shipments in a tabular format and (2) click a button to have their shipments added to their Google Calendar based on the expected delivery date of each shipment.
+
+
 ===== OPEN ISSUES =====
 - Need to account for user logging out from a different browser window; redirect to home screen
 
@@ -22,7 +26,6 @@ http://nodejs.org/api/events.html
 == For v2 ==
 - Add functionality to crawl the tracking no page/
 
-
 <!-- <div class="tracking-progress status-delivered">
     <div class="progress-indicator">
       <h2 class="hide-fromsighted">delivered</h2>
@@ -45,4 +48,4 @@ http://nodejs.org/api/events.html
 
 ===== RESOVLED =====
 - Incorporated date swig filter (for front end demo);
-- Modified the cheerio library to add a delimiter to the .text() method (BOOOOOO) -- SEE .map functionality
+- Modified the cheerio library to add a delimiter to the .text() method -- SEE .map functionality
