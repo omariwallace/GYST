@@ -1,11 +1,9 @@
 {% extends 'layout.html' %}
 
-{% block title %} GYST -- SWIGGIN BITCHES {% endblock %}
-
 {% block content %}
 <section class='container jumbotron'>
   <h1>Welcome {{user.first_name}}!</h1>
-  <a href="{{url}}" class="landing_button btn btn-danger btn-lg">Activate via Google</a>
+  <a href="{{url}}" class="landing_button btn btn-danger btn-lg activate"><span>Activate via Google</span></a>
   <a href="/orders/{{user._id | json | dequoter }}"class='landing_button btn btn-default btn-lg'>View Orders</a>
     <!-- <li><a href="/addCal">Create Calendar</a></li> -->
 </section>
