@@ -17,6 +17,8 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var gapi = require('./lib/gapi');
+var cp = require('child_process');
+var spawn = cp.spawn
 
 var app = express();
 
@@ -61,8 +63,6 @@ app.configure('production', function(){
   app.use(express.errorHandler());
 });
 
-
-
 // configure Passport-Mongoose
 var Account = require('./models/account').Account;
 // console.log(Account.serializeUser());
@@ -71,6 +71,61 @@ passport.use(new LocalStrategy(Account.authenticate()));
 passport.serializeUser(Account.serializeUser());
 passport.deserializeUser(Account.deserializeUser());
 
+// ** ROUTES ** //
+app.get('/', user_routes.index);
+app.get('/register', user_routes.register_page);
+app.get('/login', user_routes.login_page);
+app.get('/user_index', user_routes.user_index);
+app.get('/user_cal/:cal_id', user_routes.user_cal);
+app.get('/logout', user_routes.logout);
+app.get('/orders/:_id', user_routes.show_orders);
+// app.get('/glogin', gapi.glogin);
+app.get('/oauth2callback', user_routes.user_auth);
+
+// ***************** POSTS *****************
+app.post('/login',
+  passport.authenticate('local'),
+    function(req, res) {
+      console.log("executing post");
+      res.redirect('/user_index');
+    }
+);
+
+app.post('/register', user_routes.create_acct);
+app.post('/addCal', user_routes.addCal);
+app.post('/sync', user_routes.sync);
+app.post('/sync_fail', function (req, res) {
+  console.log('Failed / broken webhook');
+  console.log('Failed hook response', req.body);
+});
+
+// **********************************************
+
+http.createServer(app).listen(app.get('port'), function(){
+  console.log('Express server listening on port ' + app.get('port'));
+
+  // Running child process (using spawn method instead of exec) to create an ultrahook instance for the context.io webhook callback
+  var hook = spawn('ultrahook', ['gyst', 3000]);
+
+  // NOTE: No data comes back from this but the callback works, why!?!?
+  hook.stdout.on('data', function (data) {
+    console.log('stdout: ' + data);
+  });
+
+  // Error handler
+  hook.stderr.on('data', function (data) {
+    console.log('stderr: ' + data);
+  });
+
+  // Exit handler
+  hook.on('exit', function (code) {
+    console.log('child process exited with code ' + code);
+  });
+});
+
+
+
+// ***** PASSPORT GOOGLE OAUTH *****
 // ***** Passport Oauth Works -- Cannot Figure out how to access oauth client *****
 // // configure Passport-Google
 // passport.use(new GoogleStrategy({
@@ -95,31 +150,6 @@ passport.deserializeUser(Account.deserializeUser());
 // ));
 // ***** ABOVE THIS LINE WORKS -- JUST UNCOMMENT FOR Passport Google Oauth *****
 
-// ** ROUTES ** //
-app.get('/', user_routes.index);
-app.get('/register', user_routes.register_page);
-app.get('/login', user_routes.login_page);
-app.get('/user_index', user_routes.user_index);
-app.get('/user_cal/:cal_id', user_routes.user_cal);
-app.get('/logout', user_routes.logout);
-app.get('/orders/:_id', user_routes.show_orders);
-// app.get('/glogin', gapi.glogin);
-app.get('/oauth2callback', user_routes.user_auth);
-
-// ***** PASSPORT GOOGLE OAUTH *****
-// GET /auth/google
-//   Use passport.authenticate() as route middleware to authenticate the
-//   request.  The first step in Google authentication will involve redirecting
-//   the user to google.com.  After authenticating, Google will redirect the
-//   user back to this application at /auth/google/return
-// app.get('/auth/google',
-//   passport.authenticate('google', {
-//     scope: ['https://www.googleapis.com/auth/userinfo.profile',
-//       'https://www.googleapis.com/auth/userinfo.email',
-//       'https://www.googleapis.com/auth/calendar']
-//   }));
-
-// ***** PASSPORT GOOGLE OAUTH *****
 // GET /auth/google/return
 //   Use passport.authenticate() as route middleware to authenticate the
 //   request.  If authentication fails, the user will be redirected back to the
@@ -128,132 +158,13 @@ app.get('/oauth2callback', user_routes.user_auth);
 // app.get('/auth/google/callback',
 //   passport.authenticate('google', { failureRedirect: '/user_index' })
 // );
-
-
-// ***************** POSTS *****************
-app.post('/login',
-  passport.authenticate('local'),
-    function(req, res) {
-      console.log("executing post");
-      res.redirect('/user_index');
-    }
-);
-
-app.post('/register', user_routes.create_acct);
-
-app.post('/test', function (req, res) {
-  console.log('Success: Transmission received from context.io');
-});
-
-app.post('/fail', function (req, res) {
-  console.log('Failure: Transmission received from context.io');
-});
-
-app.post('/addCal', user_routes.addCal);
-
-// ***** PASSPORT GOOGLE OAUTH *****
 // ******************************************
 // Simple route middleware to ensure user is authenticated.
 //   Use this route middleware on any resource that needs to be protected.  If
 //   the request is authenticated (typically via a persistent login session),
 //   the request will proceed.  Otherwise, the user will be redirected to the
 //   login page.
-function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) { return next(); }
-  res.redirect('/login');
-}
-
-http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
-});
-
-// ***** Old Local Passport ISH *****
-// // Use the LocalStrategy within Passport.
-// // Passport session setup.
-// //   To support persistent login sessions, Passport needs to be able to
-// //   serialize users into and deserialize users out of the session.  Typically,
-// //   this will be as simple as storing the user ID when serializing, and finding
-// //   the user by ID when deserializing.
-// passport.serializeUser(function(user, done) {
-//   done(null, user.id);
-// });
-
-// passport.deserializeUser(function(id, done) {
-//   findById(id, function (err, user) {
-//     done(err, user);
-//   });
-// });
-
-// //   Strategies in passport require a `verify` function, which accept
-// //   credentials (in this case, a email and password), and invoke a callback
-// //   with a user object.  In the real world, this would query a database;
-// //   however, in this example we are using a baked-in set of users.
-// passport.use(new LocalStrategy(
-//   // "done" is a callback function that you CANNOT see
-//   function(username, password, done) {
-//     // asynchronous verification, for effect...
-//     process.nextTick(function () {
-
-//       // Find the user by username.  If there is no user with the given
-//       // username, or the password is not correct, set the user to `false` to
-//       // indicate failure and set a flash message.  Otherwise, return the
-//       // authenticated `user`.
-//       findByUsername (username, function(err, user) {
-//         if (err) { return done(err); }
-//         if (!user) { return done(null, false, { message: 'Unknown user ' + username }); }
-//         if (user.password != password) { return done(null, false, { message: 'Invalid password' }); }
-//         return done(null, user);
-//       })
-//     });
-//   }
-// ));
-
-// var users = [
-//     { id: 1, username: 'bob@example.com', password: 'secret', name: 'bob' }
-//   , { id: 2, username: 'joe@example.com', password: 'birthday', name: 'hoe' }
-//   , { id: 3, username: 'omari.wallace@gmail.com', password: 'admin', name: 'Omari' }
-//   , { id: 4, username: 'nnicholas1984@gmail.com', password: 'admin', name: 'Omari' }
-
-// ];
-
-// function findById(id, fn) {
-//   var idx = id - 1;
-//   if (users[idx]) {
-//     fn(null, users[idx]);
-//   } else {
-//     fn(new Error('User ' + id + ' does not exist'));
-//   }
+// function ensureAuthenticated(req, res, next) {
+//   if (req.isAuthenticated()) { return next(); }
+//   res.redirect('/login');
 // }
-
-
-// function findByUsername(username, fn) {
-//   for (var i = 0, len = users.length; i < len; i++) {
-//     var user = users[i];
-//     if (user.username === username) {
-//       return fn(null, user);
-//     }
-//   }
-//   return fn(null, null);
-// }
-
-
-
-/**** Notes to SELF ****
-==> path is an object with the following properties
-{ resolve: [Function],
-  normalize: [Function],
-  join: [Function], // brings parameters together with a '/' in between
-  relative: [Function],
-  sep: '/',
-  delimiter: ':',
-  dirname: [Function], // given a string with '/' delimeters, returns everything up until the last '/'
-  basename: [Function],
-  extname: [Function],
-  exists: [Function: deprecated],
-  existsSync: [Function: deprecated],
-  _makeLong: [Function] }
-
-==>__dirname is the route to the folder containing THIS app
-/Users/omarilwallace/fullstack/capstone/webaudio
-
-****/

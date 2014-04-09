@@ -24,15 +24,29 @@ var models = require('../models/account'),
   ==>Produces URL: GET /2.0/accounts?limit=15
 **/
 var ctxioClient = new contextIO.Client({
-  key: "2zor5ddk",
-  secret: "peQ7UrRAX4yDwElR"
+  key: "",
+  secret: ""
 });
 
+var gyst_access_id = "5318d4b97dfe6819228a73a8";
+
 exports.index = function (req,res) {
+  // Run a sync every time a user visits the home page
+  ctxioClient.accounts(gyst_access_id).sync().post(function (err, response) {
+    if (err) throw err;
+  });
+
+  // Retrieve results from the sync to confirm the last time of the sync
+  // ctxioClient.accounts(gyst_access_id).sync().get(function (err, response) {
+  //   if (err) throw err;
+  //   // console.log("GET: this is the response: ", response);
+  //   console.log("GET: this is the response's body: ", response.body);
+  // });
+
   if (req.user) {
-    res.redirect('/user_index');
+    res.redirect('/user_index'); // Render user page if a user is logged in and attached to the request object
   } else {
-    res.render('index');
+    res.render('index'); // Otherwise render landing page
   }
 };
 
@@ -130,6 +144,13 @@ exports.show_orders = function (req, res) {
       }
     })
   })
+
+}
+
+exports.sync = function (req, res) {
+  var webhook = req.body;
+  console.log("Webhook Success!")
+  console.log("Webhook response: ", webhook);
 
 }
 

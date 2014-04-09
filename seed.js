@@ -7,8 +7,8 @@ var Account = models.Account;
 var linkParser = require('./controllers/link_parsing.js');
 
 var ctxioClient = new contextIO.Client({
-  key: "2zor5ddk",
-  secret: "peQ7UrRAX4yDwElR"
+  key: "",
+  secret: ""
 });
 
 var gyst_access_id = "5318d4b97dfe6819228a73a8";

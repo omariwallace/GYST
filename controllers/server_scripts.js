@@ -1,17 +1,5 @@
 var url = require('url');
-
-var gyst_access_id = "5318d4b97dfe6819228a73a8";
-
 var contextIO = require('contextio');
-var ctxioClient = new contextIO.Client({
-  key: "2zor5ddk",
-  secret: "peQ7UrRAX4yDwElR"
-});
-
- ctxioClient.accounts(gyst_access_id).sync(function (err, response) {
-    if (err) throw err;
-    console.log(response.body);
-  });
 
 
 
